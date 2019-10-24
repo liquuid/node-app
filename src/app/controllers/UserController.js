@@ -23,12 +23,15 @@ class UserController {
       return res.status(400).json({ error: 'User already exists.' });
     }
 
-    const { id, name, email, provider } = await User.create(req.body);
+    const { id, name, email, provider, avatar_id } = await User.create(
+      req.body
+    );
     return res.json({
       id,
       name,
       email,
       provider,
+      avatar_id,
     });
   }
 
@@ -45,6 +48,7 @@ class UserController {
       confirmPassword: Yup.string().when('password', (password, field) =>
         password ? field.required().oneOf([Yup.ref('password')]) : field
       ),
+      avatar_id: Yup.number(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -64,8 +68,8 @@ class UserController {
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
       return res.status(401).json({ error: 'Password does not match' });
     }
-    const { id, name, provider } = await user.update(req.body);
-    return res.json({ id, name, provider });
+    const { id, name, provider, avatar_id } = await user.update(req.body);
+    return res.json({ id, name, provider, avatar_id });
   }
 }
 
